@@ -2,6 +2,9 @@
 
 #(define-public debug-port (open-output-file "debug.txt"))
 
+#(define-public (debug-write obj)
+    (display obj debug-port)
+    (display "\n" debug-port))
 
 #(define-public pitches #(
     -1 -1 -1 -1 #x62 #x64 #x66 -1 #x68 #x6a #x6c #x6e ; octave -2
@@ -12,8 +15,49 @@
     #x5e ; octave 2
     ))
 
+#(define-public durations '(
+    (3/4 . #xa0)
+    (1/2 . #xb0)
+    (1/4 . #x9c)
+    (3/16 . #x98)
+    (1/8 . #x94)
+    (3/32 . #x90)
+    (1/16 . #x8c)))
+
+#(define-public (lookup-duration-rec duration lst)
+    (if (null? lst)
+        (begin
+            (debug-write "Duration cannot be expressed:")
+            (debug-write duration))
+        (if (>= duration (car (car lst)))
+            (cons (car lst) (- (car (car lst)) duration))
+            (lookup-duration-rec duration (cdr lst)))))
+
+#(define-public (lookup-duration duration)
+    (lookup-duration-rec duration durations))
+
 #(define-public (write-byte state value)
     (display (integer->char value) (assoc-ref state 'output)))
+
+#(define-public (assoc-with asc key value)
+    (let ((result (list-copy asc)))
+        (assoc-set! result key value)
+        result))
+
+#(define-public (emit-note state z1pitch duration)
+    (let* ((ret (lookup-duration duration))
+           (out-duration (car (car ret)))
+           (z1duration (cdr (car ret)))
+           (rest (cdr ret)))
+          (debug-write (assoc-ref state 'last-duration))
+          (debug-write z1duration)
+          (if (eq? (assoc-ref state 'last-duration) z1duration)
+              #f
+              (write-byte state z1duration))
+          (write-byte state z1pitch)
+          (if (eq? rest 0)
+              (assoc-with state 'last-duration z1duration)
+              (emit-note (assoc-with state 'last-duration -1) 8 rest))))
 
 % convert-music takes a state and music value, and returns a new state
 % data is written to (assoc-ref state 'output)
@@ -26,9 +70,10 @@
         ((NoteEvent)
             (let* ((pitch (ly:music-property music 'pitch))
                    (index (+ (ly:pitch-semitones pitch) 36))
-                   (pitch-value (array-ref pitches index)))
-            (write-byte state pitch-value)
-            state))
+                   (pitch-value (array-ref pitches index))
+                   (ly-duration (ly:music-property music 'duration))
+                   (duration (ly:moment-main (ly:duration-length ly-duration))))
+            (emit-note state pitch-value duration)))
         (else
             (display (ly:music-property music 'name) (open-output-file "unk.txt"))
             state)))
@@ -40,9 +85,9 @@
 
 recorderTune = #(define-void-function (name music) (string? ly:music?)
     (define state (list
-        (cons 'output (open-output-file (string-append name ".bin")))))
+        (cons 'output (open-output-file (string-append name ".bin")))
+        (cons 'last-duration -1)))
     (displayMusic debug-port music)
-    (write-byte state 176)
     (convert-music state music)
     (write-byte state 0)
     (close-port (assoc-ref state 'output)))
