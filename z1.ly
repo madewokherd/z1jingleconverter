@@ -30,7 +30,7 @@
             (debug-write "Duration cannot be expressed:")
             (debug-write duration))
         (if (>= duration (car (car lst)))
-            (cons (car lst) (- (car (car lst)) duration))
+            (cons (car lst) (- duration (car (car lst))))
             (lookup-duration-rec duration (cdr lst)))))
 
 #(define-public (lookup-duration duration)
@@ -49,8 +49,6 @@
            (out-duration (car (car ret)))
            (z1duration (cdr (car ret)))
            (rest (cdr ret)))
-          (debug-write (assoc-ref state 'last-duration))
-          (debug-write z1duration)
           (if (eq? (assoc-ref state 'last-duration) z1duration)
               #f
               (write-byte state z1duration))
@@ -87,9 +85,13 @@ recorderTune = #(define-void-function (name music) (string? ly:music?)
     (define state (list
         (cons 'output (open-output-file (string-append name ".bin")))
         (cons 'last-duration -1)))
+    (debug-write name)
     (displayMusic debug-port music)
     (convert-music state music)
     (write-byte state 0)
     (close-port (assoc-ref state 'output)))
 
 \recorderTune "Prelude of Light" { \absolute { d'8 a2 d'8 a b d'2 } }
+
+% Does not work because dotted quarter notes aren't in the table, and slurs don't work as expected
+\recorderTune "Ballad of the Windfish" { \relative { b'16 cis d2 b16 cis d2 cis16 b fis a4. b2 } }
