@@ -1,5 +1,7 @@
 \version "2.20.0"
 
+#(define-public debug-port (open-output-file "debug.txt"))
+
 recorderTune = #(letrec
 
 (
@@ -44,7 +46,7 @@ recorderTune = #(letrec
 (define-void-function (name music) (string? ly:music?)
     (define state (list
         (cons 'output (open-output-file (string-append name ".bin")))))
-    (displayMusic (open-output-file "debug.txt") music)
+    (displayMusic debug-port music)
     (write-byte state 176)
     (convert-music state music)
     (write-byte state 0)
