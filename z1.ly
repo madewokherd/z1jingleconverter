@@ -13,6 +13,9 @@ recorderTune = #(letrec
     #x5e ; octave 2
     ))
 
+(write-byte (lambda (state value)
+    (display (integer->char value) (assoc-ref state 'output))))
+
 ; convert-music takes a state and music value, and returns a new state
 ; data is written to (assoc-ref state 'output)
 (convert-music (lambda (state music)
@@ -23,11 +26,9 @@ recorderTune = #(letrec
             (convert-music state (ly:music-property music 'element)))
         ((NoteEvent)
             (let* ((pitch (ly:music-property music 'pitch))
-                   (index (+ (ly:pitch-semitones pitch) 36)))
-            (display pitch
-                (assoc-ref state 'output))
-            (display index
-                (assoc-ref state 'output))
+                   (index (+ (ly:pitch-semitones pitch) 36))
+                   (pitch-value (array-ref pitches index)))
+            (write-byte state pitch-value)
             state))
         (else
             (display (ly:music-property music 'name) (open-output-file "unk.txt"))
@@ -44,8 +45,10 @@ recorderTune = #(letrec
     (define state (list
         (cons 'output (open-output-file (string-append name ".bin")))))
     (displayMusic (open-output-file "debug.txt") music)
+    (write-byte state 176)
     (convert-music state music)
-    (close-port (assoc 'output state)))
+    (write-byte state 0)
+    (close-port (assoc-ref state 'output)))
 
 )
 
