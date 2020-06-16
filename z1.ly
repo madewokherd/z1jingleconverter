@@ -2,11 +2,8 @@
 
 #(define-public debug-port (open-output-file "debug.txt"))
 
-recorderTune = #(letrec
 
-(
-
-(pitches #(
+#(define-public pitches #(
     -1 -1 -1 -1 #x62 #x64 #x66 -1 #x68 #x6a #x6c #x6e ; octave -2
     #x70 #x72 #x0a #x0c #x0e #x10 #x12 #x14 #x16 #x18 #x1a #x1c ; octave -1
     #x1e #x20 #x22 #x24 #x26 #x28 #x2a #x2c #x2e #x30 #x32 #x34 ; octave 0
@@ -15,12 +12,12 @@ recorderTune = #(letrec
     #x5e ; octave 2
     ))
 
-(write-byte (lambda (state value)
-    (display (integer->char value) (assoc-ref state 'output))))
+#(define-public (write-byte state value)
+    (display (integer->char value) (assoc-ref state 'output)))
 
-; convert-music takes a state and music value, and returns a new state
-; data is written to (assoc-ref state 'output)
-(convert-music (lambda (state music)
+% convert-music takes a state and music value, and returns a new state
+% data is written to (assoc-ref state 'output)
+#(define-public (convert-music state music)
     (case (ly:music-property music 'name)
         ((SequentialMusic)
             (convert-music-sequence state (ly:music-property music 'elements)))
@@ -34,16 +31,14 @@ recorderTune = #(letrec
             state))
         (else
             (display (ly:music-property music 'name) (open-output-file "unk.txt"))
-            state))))
+            state)))
 
-(convert-music-sequence (lambda (state musics)
+#(define-public (convert-music-sequence state musics)
     (if (null? musics)
         state
-        (convert-music-sequence (convert-music state (car musics)) (cdr musics)))))
+        (convert-music-sequence (convert-music state (car musics)) (cdr musics))))
 
-) ; end definitions
-
-(define-void-function (name music) (string? ly:music?)
+recorderTune = #(define-void-function (name music) (string? ly:music?)
     (define state (list
         (cons 'output (open-output-file (string-append name ".bin")))))
     (displayMusic debug-port music)
@@ -51,7 +46,5 @@ recorderTune = #(letrec
     (convert-music state music)
     (write-byte state 0)
     (close-port (assoc-ref state 'output)))
-
-)
 
 \recorderTune "Prelude of Light" { \absolute { d'8 a2 d'8 a b d'2 } }
