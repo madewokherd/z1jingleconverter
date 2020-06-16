@@ -54,4 +54,4 @@ recorderTune = #(letrec
 
 )
 
-\recorderTune "test tune" { \relative { c d e } }
+\recorderTune "Prelude of Light" { \absolute { d'8 a2 d'8 a b d'2 } }
