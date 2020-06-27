@@ -15,27 +15,6 @@
     #x5e ; octave 2
     ))
 
-#(define-public durations '(
-    (3/4 . #xa0)
-    (1/2 . #xb0)
-    (1/4 . #x9c)
-    (3/16 . #x98)
-    (1/8 . #x94)
-    (3/32 . #x90)
-    (1/16 . #x8c)))
-
-#(define-public (lookup-duration-rec duration lst)
-    (if (null? lst)
-        (begin
-            (debug-write "Duration cannot be expressed:")
-            (debug-write duration))
-        (if (>= duration (car (car lst)))
-            (cons (car lst) (- duration (car (car lst))))
-            (lookup-duration-rec duration (cdr lst)))))
-
-#(define-public (lookup-duration duration)
-    (lookup-duration-rec duration durations))
-
 #(define-public (write-byte state value)
     (display (integer->char value) (assoc-ref state 'output)))
 
@@ -45,17 +24,14 @@
         result))
 
 #(define-public (emit-note state z1pitch duration)
-    (let* ((ret (lookup-duration duration))
-           (out-duration (car (car ret)))
-           (z1duration (cdr (car ret)))
-           (rest (cdr ret)))
+    (let* ((z1duration (+ #x80 (round (* 144 duration)))))
+          (if (> z1duration #xff)
+              (debug-write "Note too long"))
           (if (eq? (assoc-ref state 'last-duration) z1duration)
               #f
               (write-byte state z1duration))
           (write-byte state z1pitch)
-          (if (eq? rest 0)
-              (assoc-with state 'last-duration z1duration)
-              (emit-note (assoc-with state 'last-duration -1) 8 rest))))
+          (assoc-with state 'last-duration z1duration)))
 
 % convert-music takes a state and music value, and returns a new state
 % data is written to (assoc-ref state 'output)
