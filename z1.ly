@@ -69,5 +69,4 @@ recorderTune = #(define-void-function (name music) (string? ly:music?)
 
 \recorderTune "Prelude of Light" { \absolute { d'8 a2 d'8 a b d'2 } }
 
-% Does not work because dotted quarter notes aren't in the table, and slurs don't work as expected
 \recorderTune "Ballad of the Windfish" { \relative { b'16 cis d2 b16 cis d2 cis16 b fis a4. b2 } }
