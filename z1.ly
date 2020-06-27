@@ -24,7 +24,7 @@
         result))
 
 #(define-public (emit-note state z1pitch duration)
-    (let* ((z1duration (+ #x80 (round (* 144 duration)))))
+    (let* ((z1duration (+ #x80 (round (* 160 duration)))))
           (if (> z1duration #xff)
               (debug-write "Note too long"))
           (if (eq? (assoc-ref state 'last-duration) z1duration)
