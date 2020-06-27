@@ -7,12 +7,12 @@
     (display "\n" debug-port))
 
 #(define-public pitches #(
-    -1 -1 -1 -1 #x62 #x64 #x66 -1 #x68 #x6a #x6c #x6e ; octave -2
-    #x70 #x72 #x0a #x0c #x0e #x10 #x12 #x14 #x16 #x18 #x1a #x1c ; octave -1
+    #x74 -1 -1 -1 #x62 #x64 #x66 -1 #x68 #x6a #x6c #x6e ; octave -2
+    #x70 #x4 #x0a #x0c #x0e #x10 #x12 #x14 #x16 #x18 #x1a #x1c ; octave -1
     #x1e #x20 #x22 #x24 #x26 #x28 #x2a #x2c #x2e #x30 #x32 #x34 ; octave 0
-    #x36 #x38 #x3a #x3c #x3e #x40 #x06 #x42 #x44 #x46 #x48 #x4a ; octave 1
-    -1 #x4e #x50 #x52 #x54 #x56 #x58 #x5a -1 -1 -1 #x5c ; octave 2
-    #x5e ; octave 2
+    #x36 #x38 #x3a #x3c #x3e #x40 #x06 #x42 #x44 #x48 #x46 #x4a ; octave 1
+    #x2 #x4e #x50 #x52 -1 #x54 -1 #x56 #x58 #x5a -1 #x5c ; octave 2
+    -1 #x5e ; octave 2
     ))
 
 #(define-public (write-byte state value)
