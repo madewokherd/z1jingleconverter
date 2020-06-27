@@ -24,7 +24,7 @@
         result))
 
 #(define-public (emit-note state z1pitch duration)
-    (let* ((z1duration (+ #x80 (round (* 160 duration)))))
+    (let* ((z1duration (+ #x80 (round (* (assoc-ref state 'tempo) duration)))))
           (if (> z1duration #xff)
               (debug-write "Note too long"))
           (if (eq? (assoc-ref state 'last-duration) z1duration)
@@ -57,20 +57,21 @@
         state
         (convert-music-sequence (convert-music state (car musics)) (cdr musics))))
 
-recorderTune = #(define-void-function (name music) (string? ly:music?)
+recorderTune = #(define-void-function (name tempo music) (string? integer? ly:music?)
     (define state (list
         (cons 'output (open-output-file (string-append name ".bin")))
-        (cons 'last-duration -1)))
+        (cons 'last-duration -1)
+        (cons 'tempo tempo)))
     (debug-write name)
     (displayMusic debug-port music)
     (convert-music state music)
     (write-byte state 0)
     (close-port (assoc-ref state 'output)))
 
-\recorderTune "Prelude of Light" { \absolute { d'8 a2 d'8 a b d'2 } }
+\recorderTune "Prelude of Light" 120 { \absolute { d'8 a2 d'8 a b d'2 } }
 
-\recorderTune "Ballad of the Windfish" { \relative { b'16 cis d2 b16 cis d2 cis16 b fis a4. b2 } }
+\recorderTune "Ballad of the Windfish" 160 { \relative { b'16 cis d2 b16 cis d2 cis16 b fis a4. b2 } }
 
-\recorderTune "Vanilla" { \relative { d'8 e d'4 cis16 c b2 } }
+\recorderTune "Vanilla" 160 { \relative { d'8 e d'4 cis16 c b2 } }
 
-\recorderTune "Vanilla Death" { \relative { dis'32 d cis c d cis c b cis c b ais c b ais a b ais a gis fis f e4 } }
+\recorderTune "Vanilla Death" 160 { \relative { dis'32 d cis c d cis c b cis c b ais c b ais a b ais a gis fis f e4 } }
