@@ -1,0 +1,10 @@
+
+Converter for ZORA Randomizer (https://github.com/tetraly/zora) from LilyPond format to a jingle (recorder theme) usable in a Zelda 1 ROM, in Python.
+
+To use:
+
+Run z1.ly in LilyPond. This will convert the snippets of music in the file to .bin files.
+
+To patch a recorder theme into a Zelda 1 ROM with a .bin file:
+python3 zelda1.rom filename.bin
+
