@@ -75,3 +75,15 @@ recorderTune = #(define-void-function (name tempo music) (string? integer? ly:mu
 \recorderTune "Vanilla" 160 { \relative { d'8 e d'4 cis16 c b2 } }
 
 \recorderTune "Vanilla Death" 160 { \relative { dis'32 d cis c d cis c b cis c b ais c b ais a b ais a gis fis f e4 } }
+
+\recorderTune "Kefka" 90 { \relative { e'4. b8 c a4 c8 d4 d c gis } }
+
+\recorderTune "Super Mario Land Death" 45 { \relative { g'8 f e d c2 d e } }
+
+\recorderTune "Go Go Power Rangers" 80 { \relative { e'4 e d8 e4 g e2 } }
+
+\recorderTune "Lonely Rolling Star" 160 { \relative { bes2 ees4 f f8 g16 g2 } }
+
+\recorderTune "Windows Error" 160 { \relative { d'16 e g, c,4 } }
+
+\recorderTune "World Bowser" 140 { \relative { bes4 b8 bes8 b16 e8 g4 } }
