@@ -8,3 +8,4 @@ Run z1.ly in LilyPond. This will convert the snippets of music in the file to .b
 To patch a recorder theme into a Zelda 1 ROM with a .bin file:
 python3 patch.py zelda1.rom filename.bin
 
+On Windows 10, if this doesn't do anything, try running python3 with no arguments, to make sure Python 3 is actually being run and it's not just the builtin stub that opens the Windows store.
