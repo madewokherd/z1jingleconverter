@@ -87,3 +87,7 @@ recorderTune = #(define-void-function (name tempo music) (string? integer? ly:mu
 \recorderTune "Windows Error" 160 { \relative { d'16 e g, c,4 } }
 
 \recorderTune "World Bowser" 140 { \relative { bes4 b8 bes8 b16 e8 g4 } }
+
+\recorderTune "Oh Canada" 160 { \relative { e'2 g4. g8 c,2 } }
+
+\recorderTune "Moody" 140 { \relative { ees'4. d2 c8 c8 ees2 f4 d8 d4 c2. } }
